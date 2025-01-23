@@ -22,12 +22,12 @@ const Cart: React.FC = () => {
             </thead>
             <tbody>
               {cart.map((item) => (
-                <tr key={item.id}>
+                <tr key={item.productId}>
                   <td>{item.name}</td>
                   <td>{item.quantity}</td>
                   <td>${item.price * item.quantity}</td>
                   <td>
-                    <button className="btn btn-danger btn-sm" onClick={() => removeFromCart(item.id)}>
+                    <button className="btn btn-danger btn-sm" onClick={() => removeFromCart(item.productId)}>
                       Remove
                     </button>
                   </td>

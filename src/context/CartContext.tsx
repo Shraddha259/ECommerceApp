@@ -1,13 +1,13 @@
 import React, { createContext, useState, ReactNode } from 'react';
-import { Product } from '../types/Product';
+import { IProduct } from '../types/Product';
 
-interface CartItem extends Product {
+interface CartItem extends IProduct {
   quantity: number;
 }
 
 interface CartContextType {
   cart: CartItem[];
-  addToCart: (product: Product) => void;
+  addToCart: (product: IProduct) => void;
   removeFromCart: (id: number) => void;
 }
 
@@ -16,12 +16,12 @@ export const CartContext = createContext<CartContextType | undefined>(undefined)
 export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [cart, setCart] = useState<CartItem[]>([]);
 
-  const addToCart = (product: Product) => {
+  const addToCart = (product: IProduct) => {
     setCart((prevCart) => {
-      const existingItem = prevCart.find((item) => item.id === product.id);
+      const existingItem = prevCart.find((item) => item.productId === product.productId);
       if (existingItem) {
         return prevCart.map((item) =>
-          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+          item.productId === product.productId ? { ...item, quantity: item.quantity + 1 } : item
         );
       }
       return [...prevCart, { ...product, quantity: 1 }];
@@ -29,7 +29,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const removeFromCart = (id: number) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== id));
+    setCart((prevCart) => prevCart.filter((item) => item.productId !== id));
   };
 
   return (
