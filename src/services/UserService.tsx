@@ -9,5 +9,12 @@ export const UserService = {
                 return response.data;
             })
             .catch((error) => console.error('Error fetching data:', error))
-    }
+    },
+    getUserDetails(id : string | undefined) {
+        return api.get(`/User/${id}`)
+            .then(response => {
+                return response.data;
+            })
+            .catch((error) => console.error('Error fetching data:', error))
+    },
 }

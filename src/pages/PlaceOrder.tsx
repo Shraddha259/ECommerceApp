@@ -1,129 +1,103 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { UserService } from '../services/UserService';
+import { IUser } from '../types/User';
+import { IPriceDetails } from '../types/PriceDetails';
+import { useAuth } from '../context/AuthContext';
+import { ICartItem } from '../types/Cart';
 
 const PlaceOrder: React.FC = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    address: '',
-    city: '',
-    postalCode: '',
-    phone: '',
-    paymentMethod: 'Credit Card', // Default payment method
-  });
+  const [user, setUser] = useState<IUser>();
+  const { userId } = useAuth();
+  const [address, setAddress] = useState<string>('');
+  // const navigate = useNavigate();
+  const location = useLocation();
+  const {
+    subtotal,
+    tax,
+    total,
+    discount,
+    shipping,
+    products,
+    taxRate,
+  } = location.state || {};
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  useEffect(() => {
+    if (userId) {
+      UserService.getUserDetails(userId).then((data) => {
+        setUser(data.data)
+        setAddress(data.data.address || '');
+      });
+    }
+  }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Perform your order logic here (e.g., API call, save order details)
-    console.log('Order placed:', formData);
-    alert('Order placed successfully!');
-  };
+  const handlePlaceOrder = () => {
+    console.log(user);
+
+    const orderDto = {
+      orderId: 0, 
+      userId: userId, 
+      address: address,
+      MobileNumber: user?.mobileNumber,
+      totalAmount: total, 
+      status: "Pending", 
+    };
+
+    const orderDetailDto = products.map((product : ICartItem, index : number) => ({
+      orderDetailId: 0, 
+      orderId: 0, 
+      productId: product.productId,
+      quantity: product.quantity,
+      unitPrice: product.price,
+      totalPrice: product.quantity * product.price,
+    }));
+
+    const paymentRequest = {
+      amount: total, 
+      paymentMethodId: "CreditCard", 
+    };
+
+    const payload = {
+      orderDto,
+      orderDetailDto,
+      paymentRequest,
+    };
+
+    console.log("Payload:", payload);
+
+  }
 
   return (
-    <div className="container my-5">
-      <h2 className="text-center mb-4">Place Your Order</h2>
-      <form onSubmit={handleSubmit} className="border p-4 shadow-sm rounded bg-light">
-        <div className="mb-3">
-          <label htmlFor="name" className="form-label">
-            Full Name
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
+    <>
+      <div className="p-4 border rounded-lg shadow-md bg-white">
+        <h2 className="text-xl font-bold mb-4">Deliver to:</h2>
+        <div className="flex justify-between py-2">
+          <span className="text-gray-600">Name: </span>
+          <span className="font-semibold">{user?.firstName}</span>
+        </div>
+        <div className="flex justify-between py-2">
+          <span className="text-gray-600">Number: </span>
+          <span className="font-semibold text-red-500">{user?.mobileNumber}</span>
+        </div>
+        <div className="flex justify-between py-2">
+          <span className="text-gray-600">Addess: </span>
+          <textarea
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            rows={5}
+            cols={30}
           />
         </div>
-
-        <div className="mb-3">
-          <label htmlFor="address" className="form-label">
-            Address
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="address"
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="row">
-          <div className="col-md-6 mb-3">
-            <label htmlFor="city" className="form-label">
-              City
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              id="city"
-              name="city"
-              value={formData.city}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="col-md-6 mb-3">
-            <label htmlFor="postalCode" className="form-label">
-              Postal Code
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              id="postalCode"
-              name="postalCode"
-              value={formData.postalCode}
-              onChange={handleChange}
-              required
-            />
-          </div>
-        </div>
-
-        <div className="mb-3">
-          <label htmlFor="phone" className="form-label">
-            Phone Number
-          </label>
-          <input
-            type="tel"
-            className="form-control"
-            id="phone"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="mb-3">
-          <label htmlFor="paymentMethod" className="form-label">
-            Payment Method
-          </label>
-          <select
-            className="form-select"
-            id="paymentMethod"
-            name="paymentMethod"
-            value={formData.paymentMethod}
-            onChange={handleChange}
-            required
-          >
-            <option value="Credit Card">Credit Card</option>
-            <option value="PayPal">PayPal</option>
-            <option value="Cash on Delivery">Cash on Delivery</option>
-          </select>
-        </div>
-
-        <button type="submit" className="btn btn-primary w-100">
-          Place Order
+        <div className="flex justify-between p-2">
+        <button
+          className="btn btn-primary btn-lg"
+          onClick={handlePlaceOrder}
+        >
+          Continue
         </button>
-      </form>
-    </div>
+      </div>
+      </div>
+    </>
   );
 };
 

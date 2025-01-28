@@ -1,14 +1,10 @@
 import React from 'react'
 import { ICartItem } from '../types/Cart';
+import { useNavigate } from 'react-router-dom';
+import { IPriceDetails } from '../types/PriceDetails';
 
-interface PriceDetailsProps {
-    products: ICartItem[];
-    taxRate: number; // Tax rate as a percentage (e.g., 10 for 10%)
-    discount: number; // Total discount to be applied
-    shipping: number; // Shipping cost
-}
 
-const PriceDetails: React.FC<PriceDetailsProps> = ({
+const PriceDetails: React.FC<IPriceDetails> = ({
     products,
     taxRate,
     discount,
@@ -30,8 +26,20 @@ const PriceDetails: React.FC<PriceDetailsProps> = ({
     const tax = calculateTax(subtotal);
     const total = calculateTotal(subtotal, tax);
 
+    const navigate = useNavigate();
+
     const handlePlaceOrder = () => {
-        return 0;
+        navigate('/place-order', {
+            state: {
+                subtotal,
+                tax,
+                total,
+                discount,
+                shipping,
+                products,
+                taxRate,
+            },
+        });
     };
     return (
         <>

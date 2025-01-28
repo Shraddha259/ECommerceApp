@@ -20,7 +20,7 @@ const Login: React.FC = () => {
         e.preventDefault();
         UserService.getUser(email).then((data) => {
             if (data.data !== null && data.data.email === email && data.data.passwordHash === password) {
-                login(email);
+                login(data.data);
                 navigate('/');
             } else {
                 alert('Invalid credentials');

@@ -10,7 +10,7 @@ export const ProductService = {
             })
             .catch((error) => console.error('Error fetching data:', error))
     },
-    getproductDetails(id : string | undefined) {
+    getProductDetails(id : string | undefined) {
         return api.get(`/Product/${id}`)
             .then(response => {
                 return response.data;

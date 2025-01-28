@@ -9,7 +9,7 @@ const ProductDetails: React.FC = () => {
   // const product = products.find((prod) => prod.productId === parseInt(id || ''));
   const [product, setProduct] = useState<IProduct>();
     useEffect(() => {
-        ProductService.getproductDetails(id).then((data) => setProduct(data.data));
+        ProductService.getProductDetails(id).then((data) => setProduct(data.data));
     }, []);
 
   const { addToCart } = useContext(CartContext)!;
