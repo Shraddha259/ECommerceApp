@@ -1,31 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext'; // Adjust the path
 import { useNavigate } from 'react-router-dom';
-
+import { UserService } from '../services/UserService';
 
 const Login: React.FC = () => {
-    const { login,user } = useAuth();
-    const [email, setEmail] = useState('test@example.com');
-    const [password, setPassword] = useState('password');
+    const { login, user } = useAuth();
+    const [email, setEmail] = useState('shraddha@gmail.com');
+    const [password, setPassword] = useState('hashedpassword123');
     const navigate = useNavigate();
 
     useEffect(() => {
-      if (user) {
-        navigate('/'); 
-      }
+        if (user) {
+            navigate('/');
+        }
     }, [navigate]);
 
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-
-        if (email === 'test@example.com' && password === 'password') {
-            login(email); 
-            navigate('/');
-
-        } else {
-            alert('Invalid credentials');
-        }
+        UserService.getUser(email).then((data) => {
+            if (data.data !== null && data.data.email === email && data.data.passwordHash === password) {
+                login(email);
+                navigate('/');
+            } else {
+                alert('Invalid credentials');
+            }
+        });
     };
 
     return (
@@ -57,7 +57,7 @@ const Login: React.FC = () => {
                 </form>
             </div>
         </div>
-  );
+    );
 };
 
 export default Login;

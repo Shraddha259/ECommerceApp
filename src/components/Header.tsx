@@ -26,7 +26,7 @@ const Header: React.FC = () => {
                 <div className="d-flex align-items-center">
                     {user ? (
                         <>
-                            <span className="avatar text-bg-secondary avatar-lg me-2" title='Shraddha'>Shraddha</span>
+                            <span className="avatar text-bg-secondary avatar-lg me-2" title='Shraddha'>{user}</span>
                             {/* <span className="me-2 text-white">Shraddha</span> */}
                             <button onClick={handleLogout} className="btn btn-outline-light">
                                 Logout

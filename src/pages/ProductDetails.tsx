@@ -25,7 +25,7 @@ const ProductDetails: React.FC = () => {
         <div className="col-md-6">
           <h1>{product.name}</h1>
           <p>{product.description}</p>
-          <p><strong>${product.price}</strong></p>
+          <p><strong>₹{product.price}</strong></p>
           <button className="btn btn-success" onClick={() => addToCart(product)}>
             Add to Cart
           </button>
