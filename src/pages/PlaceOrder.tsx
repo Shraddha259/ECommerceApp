@@ -5,6 +5,7 @@ import { IUser } from '../types/User';
 import { IPriceDetails } from '../types/PriceDetails';
 import { useAuth } from '../context/AuthContext';
 import { ICartItem } from '../types/Cart';
+import { OrderService } from '../services/OrderService';
 
 const PlaceOrder: React.FC = () => {
   const [user, setUser] = useState<IUser>();
@@ -64,7 +65,11 @@ const PlaceOrder: React.FC = () => {
     };
 
     console.log("Payload:", payload);
-
+ 
+    OrderService.PlaceOrder(payload).then((data) => {
+      setUser(data.data)
+      setAddress(data.data.address || '');
+    });
   }
 
   return (
