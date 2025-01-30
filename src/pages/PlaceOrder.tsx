@@ -37,7 +37,7 @@ const PlaceOrder: React.FC = () => {
 
     const orderDto = {
       orderId: 0, 
-      userId: userId, 
+      userId: userId ? Number(userId) : 0, // Convert to number or default to 0
       address: address,
       MobileNumber: user?.mobileNumber,
       totalAmount: total, 
