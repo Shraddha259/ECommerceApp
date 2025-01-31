@@ -67,8 +67,8 @@ const PlaceOrder: React.FC = () => {
     console.log("Payload:", payload);
  
     OrderService.PlaceOrder(payload).then((data) => {
-      setUser(data.data)
-      setAddress(data.data.address || '');
+      debugger
+      
     });
   }
 
