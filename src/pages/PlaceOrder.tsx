@@ -32,21 +32,21 @@ const PlaceOrder: React.FC = () => {
     }
   }, []);
 
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async () => {
     console.log(user);
 
     const orderDto = {
-      orderId: 0, 
+      orderId: 0,
       userId: userId ? Number(userId) : 0, // Convert to number or default to 0
       address: address,
       MobileNumber: user?.mobileNumber,
-      totalAmount: total, 
-      status: "Pending", 
+      totalAmount: total,
+      status: "Pending",
     };
 
-    const orderDetailDto = products.map((product : ICartItem, index : number) => ({
-      orderDetailId: 0, 
-      orderId: 0, 
+    const orderDetailDto = products.map((product: ICartItem, index: number) => ({
+      orderDetailId: 0,
+      orderId: 0,
       productId: product.productId,
       quantity: product.quantity,
       unitPrice: product.price,
@@ -54,8 +54,8 @@ const PlaceOrder: React.FC = () => {
     }));
 
     const paymentRequest = {
-      amount: total, 
-      paymentMethodId: "CreditCard", 
+      amount: total,
+      paymentMethodId: "CreditCard",
     };
 
     const payload = {
@@ -65,10 +65,26 @@ const PlaceOrder: React.FC = () => {
     };
 
     console.log("Payload:", payload);
- 
-    OrderService.PlaceOrder(payload).then((data) => {
+
+    await OrderService.PlaceOrder(payload).then((id) => {
       debugger
-      
+      if (id !== null) {
+        console.log("OrderId: ", id);
+         checkOrderStatus(id);
+      }
+    });
+  }
+
+  const checkOrderStatus = async (orderId: number | undefined) => {
+    await OrderService.getOrder(orderId).then((data) => {
+      debugger
+      console.log("Checkout URL:", data.data);
+
+      if (data.data.checkoutUrl) {
+        window.location.href = data.data.checkoutUrl;
+      } else {
+        setTimeout(() => checkOrderStatus(orderId), 2000); // Retry in 2 seconds
+      }
     });
   }
 
@@ -94,13 +110,13 @@ const PlaceOrder: React.FC = () => {
           />
         </div>
         <div className="flex justify-between p-2">
-        <button
-          className="btn btn-primary btn-lg"
-          onClick={handlePlaceOrder}
-        >
-          Continue
-        </button>
-      </div>
+          <button
+            className="btn btn-primary btn-lg"
+            onClick={handlePlaceOrder}
+          >
+            Continue
+          </button>
+        </div>
       </div>
     </>
   );
