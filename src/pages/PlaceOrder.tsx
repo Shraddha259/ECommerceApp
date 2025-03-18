@@ -66,26 +66,36 @@ const PlaceOrder: React.FC = () => {
 
     console.log("Payload:", payload);
 
-    await OrderService.PlaceOrder(payload).then((id) => {
-      debugger
-      if (id !== null) {
-        console.log("OrderId: ", id);
-         checkOrderStatus(id);
+    try {
+      const orderId = await OrderService.PlaceOrder(payload); // Await API response
+      if (orderId) {
+        console.log("Order placed successfully with ID:", orderId);
+        checkOrderStatus(orderId); // Start checking status
+      } else {
+        console.error("Failed to place order. Order ID is null.");
       }
-    });
+    } catch (error) {
+      console.error("Error in handlePlaceOrder:", error);
+    }
   }
 
   const checkOrderStatus = async (orderId: number | undefined) => {
-    await OrderService.getOrder(orderId).then((data) => {
+    try {
+      const res = await OrderService.getOrder(orderId); // Await API response
+      console.log("Checkout URL:", res.data);
       debugger
-      console.log("Checkout URL:", data.data);
 
-      if (data.data.checkoutUrl) {
-        window.location.href = data.data.checkoutUrl;
-      } else {
+      if (res.data != null && res.data.checkoutUrl) {
+        debugger
+        window.location.href = res.data.checkoutUrl;
+      }
+      else {
+        //checkOrderStatus(orderId);
         setTimeout(() => checkOrderStatus(orderId), 2000); // Retry in 2 seconds
       }
-    });
+    } catch (error) {
+      console.error("Error in handlePlaceOrder:", error);
+    }
   }
 
   return (
